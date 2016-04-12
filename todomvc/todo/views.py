@@ -6,17 +6,16 @@ from todo.serializers import TodoSerializer
 from todo.models import Todo
 
 
-
-class ListCreateTodo(APIView):
-
-    def get(self, request, pk):
-        try:
-            todo = Todo.objects.get(pk=pk)
-        except Todo.DoesNotExist as e:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-
-        serializer = TodoSerializer(todo, many=True, context={'request':request})
-        return Response(serializer.data)
+# class ListCreateTodo(APIView):
+#
+#     def get(self, request, pk):
+#         try:
+#             todo = Todo.objects.get(pk=pk)
+#         except Todo.DoesNotExist as e:
+#             return Response(status=status.HTTP_404_NOT_FOUND)
+#
+#         serializer = TodoSerializer(todo, context={'request':request})
+#         return Response(serializer.data)
 
 @api_view(['GET', 'POST'])
 def list_create_todo(request):
@@ -26,15 +25,21 @@ def list_create_todo(request):
         return Response(serializer.data)
 
     elif request.method == 'POST':
-        todo = Todo.objects.first()
 
         serializer = TodoSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(todo=todo)
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class DetailUpdateDeleteTodo(APIView):
+
+    def get_todo(pk):
+        try:
+            todo = Todo.objects.get(pk=pk)
+            return todo
+        except Todo.DoesNotExist as e:
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
     def get(self, request, pk):
         try:
