@@ -47,7 +47,7 @@ class DetailUpdateDeleteTodo(APIView):
         except Todo.DoesNotExist as e:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-        serializer = TodoSerializer(todo, context={"request": request})
+        serializer = TodoSerializer(todo)
         return Response(serializer.data)
 
     def put(self, request, pk):
